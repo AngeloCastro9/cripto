@@ -48,10 +48,12 @@ class _LoginState extends State<Login> {
     auth
         .signInWithEmailAndPassword(email: user.email, password: user.senha)
         .then((firebaseUser) {
-      Navigator.push(context, MaterialPageRoute(builder: (context) => Home()));
+      Navigator.pushReplacement(
+          context, MaterialPageRoute(builder: (context) => Home()));
     }).catchError((error) {
       setState(() {
-        _mensagemErro = "Usuário ou senha inválidos";
+        _mensagemErro =
+            "Erro ao autenticar usuário, verifique e-mail e senha e tente novamente!";
       });
     });
   }
@@ -63,7 +65,8 @@ class _LoginState extends State<Login> {
     FirebaseUser usuarioLogado = await auth.currentUser();
 
     if (usuarioLogado != null) {
-      Navigator.push(context, MaterialPageRoute(builder: (context) => Home()));
+      Navigator.pushReplacement(
+          context, MaterialPageRoute(builder: (context) => Home()));
     }
   }
 
@@ -87,7 +90,7 @@ class _LoginState extends State<Login> {
                 Padding(
                   padding: EdgeInsets.only(bottom: 32),
                   child: Image.asset(
-                    "images/logo.png",
+                    "imagens/logo.png",
                     width: 200,
                     height: 150,
                   ),

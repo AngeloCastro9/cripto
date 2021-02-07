@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 import 'Home.dart';
 import 'model/User.dart';
@@ -34,7 +35,7 @@ class _RegisterState extends State<Register> {
           user.email = email;
           user.senha = senha;
 
-          _cadastrarUser(user);
+          _cadastrarUsuario(user);
         } else {
           setState(() {
             _mensagemErro = "Preencha a senha! digite mais de 6 caracteres";
@@ -52,18 +53,26 @@ class _RegisterState extends State<Register> {
     }
   }
 
-  _cadastrarUser(User user) {
+  _cadastrarUsuario(User user) {
     FirebaseAuth auth = FirebaseAuth.instance;
 
     auth
         .createUserWithEmailAndPassword(email: user.email, password: user.senha)
         .then((firebaseUser) {
-      Navigator.push(context, MaterialPageRoute(builder: (context) => Home()));
+      //Salvar dados do usuário
+      Firestore db = Firestore.instance;
+
+      db
+          .collection("users")
+          .document(firebaseUser.user.uid)
+          .setData(user.toMap());
+
+      Navigator.pushReplacement(
+          context, MaterialPageRoute(builder: (context) => Home()));
     }).catchError((error) {
       print("erro app: " + error.toString());
       setState(() {
-        _mensagemErro =
-            "Erro ao cadastrar usuário, verifique os campos e tente novamente!";
+        _mensagemErro = "Usuário ou senha inválidos";
       });
     });
   }
@@ -72,7 +81,7 @@ class _RegisterState extends State<Register> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Register"),
+        title: Text("Cadastro"),
         backgroundColor: Colors.blue,
       ),
       body: Container(
@@ -86,7 +95,7 @@ class _RegisterState extends State<Register> {
                 Padding(
                   padding: EdgeInsets.only(bottom: 32),
                   child: Image.asset(
-                    "images/user.png",
+                    "imagens/usuario.png",
                     width: 200,
                     height: 150,
                   ),
