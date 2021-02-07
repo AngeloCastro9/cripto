@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "186913165189",
+    "project_id": "cripto-fd8e0",
+    "storage_bucket": "cripto-fd8e0.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:186913165189:android:940a18aa5b23b860aa3eec",
+        "android_client_info": {
+          "package_name": "com.example.cripto"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "186913165189-bhj7mmuq8hnh0pneg3bab1keq4lvb5gi.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAqHczxLWI5EZpnOizhJ87BsCdY5nkvZdA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "186913165189-bhj7mmuq8hnh0pneg3bab1keq4lvb5gi.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
