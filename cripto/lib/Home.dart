@@ -1,7 +1,9 @@
-import 'package:cripto/views/Chat.dart';
-import 'package:cripto/views/Contact.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cripto/views/Contact.dart';
+import 'package:cripto/views/Chat.dart';
+
+import 'Login.dart';
 
 class Home extends StatefulWidget {
   @override
@@ -10,7 +12,7 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
   TabController _tabController;
-
+  List<String> itensMenu = ["Configurações", "Deslogar"];
   String _emailUsuario = "";
 
   Future _recuperarDadosUsuario() async {
@@ -31,12 +33,30 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
     _tabController = TabController(length: 2, vsync: this);
   }
 
+  _escolhaMenuItem(String itemEscolhido) {
+    switch (itemEscolhido) {
+      case "Configurações":
+        print("Configurações");
+        break;
+      case "Deslogar":
+        _deslogarUsuario();
+        break;
+    }
+  }
+
+  _deslogarUsuario() async {
+    FirebaseAuth auth = FirebaseAuth.instance;
+    await auth.signOut();
+
+    Navigator.pushReplacement(
+        context, MaterialPageRoute(builder: (context) => Login()));
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("WhatsApp"),
-        backgroundColor: Colors.blue,
+        title: Text("Cripto"),
         bottom: TabBar(
           indicatorWeight: 4,
           labelStyle: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
@@ -51,6 +71,19 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
             )
           ],
         ),
+        actions: <Widget>[
+          PopupMenuButton<String>(
+            onSelected: _escolhaMenuItem,
+            itemBuilder: (context) {
+              return itensMenu.map((String item) {
+                return PopupMenuItem<String>(
+                  value: item,
+                  child: Text(item),
+                );
+              }).toList();
+            },
+          )
+        ],
       ),
       body: TabBarView(
         controller: _tabController,
