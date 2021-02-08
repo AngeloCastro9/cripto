@@ -67,12 +67,11 @@ class _RegisterState extends State<Register> {
           .document(firebaseUser.user.uid)
           .setData(user.toMap());
 
-      Navigator.pushReplacement(
-          context, MaterialPageRoute(builder: (context) => Home()));
+      Navigator.pushNamedAndRemoveUntil(context, "/home", (_) => false);
     }).catchError((error) {
       print("erro app: " + error.toString());
       setState(() {
-        _mensagemErro = "Usuário ou senha inválidos";
+        _mensagemErro = error.toString();
       });
     });
   }
