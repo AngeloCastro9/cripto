@@ -1,20 +1,20 @@
 class User {
-  String _nome;
+  String _name;
   String _email;
-  String _senha;
+  String _password;
 
   User();
 
   Map<String, dynamic> toMap() {
-    Map<String, dynamic> map = {"nome": this.nome, "email": this.email};
+    Map<String, dynamic> map = {"name": this.name, "email": this.email};
 
     return map;
   }
 
-  String get senha => _senha;
+  String get password => _password;
 
-  set senha(String value) {
-    _senha = value;
+  set password(String value) {
+    _password = value;
   }
 
   String get email => _email;
@@ -23,9 +23,9 @@ class User {
     _email = value;
   }
 
-  String get nome => _nome;
+  String get name => _name;
 
-  set nome(String value) {
-    _nome = value;
+  set name(String value) {
+    _name = value;
   }
 }

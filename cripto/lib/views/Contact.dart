@@ -7,7 +7,7 @@ class Contact extends StatefulWidget {
 }
 
 class _ContactState extends State<Contact> {
-  List<Chats> listaConversas = [
+  List<Chats> chatList = [
     Chats("Teste", "testador!",
         "https://firebasestorage.googleapis.com/v0/b/whatsapp-36cd8.appspot.com/o/perfil%2Fperfil2.jpg?alt=media&token=659622c6-4a5d-451a-89b9-05712c64b526"),
   ];
@@ -15,19 +15,19 @@ class _ContactState extends State<Contact> {
   @override
   Widget build(BuildContext context) {
     return ListView.builder(
-        itemCount: listaConversas.length,
+        itemCount: chatList.length,
         itemBuilder: (context, indice) {
-          Chats conversa = listaConversas[indice];
+          Chats chat = chatList[indice];
 
           return ListTile(
             contentPadding: EdgeInsets.fromLTRB(16, 8, 16, 8),
             leading: CircleAvatar(
               maxRadius: 30,
               backgroundColor: Colors.grey,
-              backgroundImage: NetworkImage(conversa.caminhoFoto),
+              backgroundImage: NetworkImage(chat.photoPath),
             ),
             title: Text(
-              conversa.nome,
+              chat.name,
               style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
             ),
           );

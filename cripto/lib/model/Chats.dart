@@ -1,25 +1,25 @@
 class Chats {
-  String _nome;
-  String _mensagem;
-  String _caminhoFoto;
+  String _name;
+  String _message;
+  String _photoPath;
 
-  Chats(this._nome, this._mensagem, this._caminhoFoto);
+  Chats(this._name, this._message, this._photoPath);
 
-  String get nome => _nome;
+  String get name => _name;
 
-  set nome(String value) {
-    _nome = value;
+  set name(String value) {
+    _name = value;
   }
 
-  String get mensagem => _mensagem;
+  String get message => _message;
 
-  String get caminhoFoto => _caminhoFoto;
+  String get photoPath => _photoPath;
 
-  set caminhoFoto(String value) {
-    _caminhoFoto = value;
+  set photoPath(String value) {
+    _photoPath = value;
   }
 
-  set mensagem(String value) {
-    _mensagem = value;
+  set message(String value) {
+    _message = value;
   }
 }

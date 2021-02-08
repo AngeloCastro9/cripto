@@ -11,33 +11,33 @@ class Login extends StatefulWidget {
 
 class _LoginState extends State<Login> {
   TextEditingController _controllerEmail = TextEditingController();
-  TextEditingController _controllerSenha = TextEditingController();
-  String _mensagemErro = "";
+  TextEditingController _controllerpassword = TextEditingController();
+  String _errorMessage = "";
 
   _validarCampos() {
     //Recupera dados dos campos
     String email = _controllerEmail.text;
-    String senha = _controllerSenha.text;
+    String password = _controllerpassword.text;
 
     if (email.isNotEmpty && email.contains("@")) {
-      if (senha.isNotEmpty) {
+      if (password.isNotEmpty) {
         setState(() {
-          _mensagemErro = "";
+          _errorMessage = "";
         });
 
         User user = User();
         user.email = email;
-        user.senha = senha;
+        user.password = password;
 
         _logarUsuario(user);
       } else {
         setState(() {
-          _mensagemErro = "Preencha a senha!";
+          _errorMessage = "Preencha a password!";
         });
       }
     } else {
       setState(() {
-        _mensagemErro = "Preencha o E-mail utilizando @";
+        _errorMessage = "Preencha o E-mail utilizando @";
       });
     }
   }
@@ -46,31 +46,31 @@ class _LoginState extends State<Login> {
     FirebaseAuth auth = FirebaseAuth.instance;
 
     auth
-        .signInWithEmailAndPassword(email: user.email, password: user.senha)
+        .signInWithEmailAndPassword(email: user.email, password: user.password)
         .then((firebaseUser) {
       Navigator.pushReplacementNamed(context, "/home");
     }).catchError((error) {
       setState(() {
-        _mensagemErro =
-            "Erro ao autenticar usuário, verifique e-mail e senha e tente novamente!";
+        _errorMessage =
+            "Erro ao autenticar usuário, verifique e-mail e password e tente novamente!";
       });
     });
   }
 
-  Future _verificarUsuarioLogado() async {
+  Future _verificaruserLogged() async {
     FirebaseAuth auth = FirebaseAuth.instance;
     //auth.signOut();
 
-    FirebaseUser usuarioLogado = await auth.currentUser();
+    FirebaseUser userLogged = await auth.currentUser();
 
-    if (usuarioLogado != null) {
+    if (userLogged != null) {
       Navigator.pushReplacementNamed(context, "/home");
     }
   }
 
   @override
   void initState() {
-    _verificarUsuarioLogado();
+    _verificaruserLogged();
     super.initState();
   }
 
@@ -110,13 +110,13 @@ class _LoginState extends State<Login> {
                   ),
                 ),
                 TextField(
-                  controller: _controllerSenha,
+                  controller: _controllerpassword,
                   obscureText: true,
                   keyboardType: TextInputType.text,
                   style: TextStyle(fontSize: 20),
                   decoration: InputDecoration(
                       contentPadding: EdgeInsets.fromLTRB(32, 16, 32, 16),
-                      hintText: "Senha",
+                      hintText: "password",
                       filled: true,
                       fillColor: Colors.white,
                       border: OutlineInputBorder(
@@ -151,7 +151,7 @@ class _LoginState extends State<Login> {
                   padding: EdgeInsets.only(top: 16),
                   child: Center(
                     child: Text(
-                      _mensagemErro,
+                      _errorMessage,
                       style: TextStyle(color: Colors.red, fontSize: 20),
                     ),
                   ),

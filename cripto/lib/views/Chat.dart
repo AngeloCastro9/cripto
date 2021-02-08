@@ -3,11 +3,11 @@ import 'package:cripto/model/Chats.dart';
 
 class Chat extends StatefulWidget {
   @override
-  _AbaConversasState createState() => _AbaConversasState();
+  _ChatState createState() => _ChatState();
 }
 
-class _AbaConversasState extends State<Chat> {
-  List<Chats> listaConversas = [
+class _ChatState extends State<Chat> {
+  List<Chats> chatList = [
     Chats("Teste", "Testando o teste testado",
         "https://firebasestorage.googleapis.com/v0/b/whatsapp-36cd8.appspot.com/o/perfil%2Fperfil2.jpg?alt=media&token=659622c6-4a5d-451a-89b9-05712c64b526"),
   ];
@@ -15,22 +15,22 @@ class _AbaConversasState extends State<Chat> {
   @override
   Widget build(BuildContext context) {
     return ListView.builder(
-        itemCount: listaConversas.length,
+        itemCount: chatList.length,
         itemBuilder: (context, indice) {
-          Chats conversa = listaConversas[indice];
+          Chats chat = chatList[indice];
 
           return ListTile(
             contentPadding: EdgeInsets.fromLTRB(16, 8, 16, 8),
             leading: CircleAvatar(
               maxRadius: 30,
               backgroundColor: Colors.grey,
-              backgroundImage: NetworkImage(conversa.caminhoFoto),
+              backgroundImage: NetworkImage(chat.photoPath),
             ),
             title: Text(
-              conversa.nome,
+              chat.name,
               style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
             ),
-            subtitle: Text(conversa.mensagem,
+            subtitle: Text(chat.message,
                 style: TextStyle(color: Colors.grey, fontSize: 14)),
           );
         });

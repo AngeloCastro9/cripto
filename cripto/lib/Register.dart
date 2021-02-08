@@ -12,43 +12,43 @@ class Register extends StatefulWidget {
 
 class _RegisterState extends State<Register> {
   //Controladores
-  TextEditingController _controllerNome = TextEditingController();
+  TextEditingController _controllername = TextEditingController();
   TextEditingController _controllerEmail = TextEditingController();
-  TextEditingController _controllerSenha = TextEditingController();
-  String _mensagemErro = "";
+  TextEditingController _controllerpassword = TextEditingController();
+  String _errorMessage = "";
 
   _validarCampos() {
     //Recupera dados dos campos
-    String nome = _controllerNome.text;
+    String name = _controllername.text;
     String email = _controllerEmail.text;
-    String senha = _controllerSenha.text;
+    String password = _controllerpassword.text;
 
-    if (nome.isNotEmpty) {
+    if (name.isNotEmpty) {
       if (email.isNotEmpty && email.contains("@")) {
-        if (senha.isNotEmpty && senha.length > 6) {
+        if (password.isNotEmpty && password.length > 6) {
           setState(() {
-            _mensagemErro = "";
+            _errorMessage = "";
           });
 
           User user = User();
-          user.nome = nome;
+          user.name = name;
           user.email = email;
-          user.senha = senha;
+          user.password = password;
 
           _cadastrarUsuario(user);
         } else {
           setState(() {
-            _mensagemErro = "Preencha a senha! digite mais de 6 caracteres";
+            _errorMessage = "Preencha a senha! digite mais de 6 caracteres";
           });
         }
       } else {
         setState(() {
-          _mensagemErro = "Preencha o E-mail utilizando @";
+          _errorMessage = "Preencha o E-mail utilizando @";
         });
       }
     } else {
       setState(() {
-        _mensagemErro = "Preencha o Nome";
+        _errorMessage = "Preencha o nome";
       });
     }
   }
@@ -57,7 +57,8 @@ class _RegisterState extends State<Register> {
     FirebaseAuth auth = FirebaseAuth.instance;
 
     auth
-        .createUserWithEmailAndPassword(email: user.email, password: user.senha)
+        .createUserWithEmailAndPassword(
+            email: user.email, password: user.password)
         .then((firebaseUser) {
       //Salvar dados do usuário
       Firestore db = Firestore.instance;
@@ -71,7 +72,7 @@ class _RegisterState extends State<Register> {
     }).catchError((error) {
       print("erro app: " + error.toString());
       setState(() {
-        _mensagemErro = error.toString();
+        _errorMessage = error.toString();
       });
     });
   }
@@ -102,13 +103,13 @@ class _RegisterState extends State<Register> {
                 Padding(
                   padding: EdgeInsets.only(bottom: 8),
                   child: TextField(
-                    controller: _controllerNome,
+                    controller: _controllername,
                     autofocus: true,
                     keyboardType: TextInputType.text,
                     style: TextStyle(fontSize: 20),
                     decoration: InputDecoration(
                         contentPadding: EdgeInsets.fromLTRB(32, 16, 32, 16),
-                        hintText: "Nome",
+                        hintText: "name",
                         filled: true,
                         fillColor: Colors.white,
                         border: OutlineInputBorder(
@@ -131,13 +132,13 @@ class _RegisterState extends State<Register> {
                   ),
                 ),
                 TextField(
-                  controller: _controllerSenha,
+                  controller: _controllerpassword,
                   obscureText: true,
                   keyboardType: TextInputType.text,
                   style: TextStyle(fontSize: 20),
                   decoration: InputDecoration(
                       contentPadding: EdgeInsets.fromLTRB(32, 16, 32, 16),
-                      hintText: "Senha",
+                      hintText: "password",
                       filled: true,
                       fillColor: Colors.white,
                       border: OutlineInputBorder(
@@ -160,7 +161,7 @@ class _RegisterState extends State<Register> {
                 ),
                 Center(
                   child: Text(
-                    _mensagemErro,
+                    _errorMessage,
                     style: TextStyle(color: Colors.red, fontSize: 20),
                   ),
                 )

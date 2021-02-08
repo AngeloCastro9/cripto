@@ -16,11 +16,11 @@ class RouteGenerator {
       case "/home":
         return MaterialPageRoute(builder: (_) => Home());
       default:
-        _erroRota();
+        _routeError();
     }
   }
 
-  static Route<dynamic> _erroRota() {
+  static Route<dynamic> _routeError() {
     return MaterialPageRoute(builder: (_) {
       return Scaffold(
         appBar: AppBar(
