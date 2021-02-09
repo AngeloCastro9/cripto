@@ -77,7 +77,7 @@ class _SettingsState extends State<Settings> {
     String nome = _controllerNome.text;
     Firestore db = Firestore.instance;
 
-    Map<String, dynamic> dadosAtualizar = {"nome": nome};
+    Map<String, dynamic> dadosAtualizar = {"name": nome};
 
     db
         .collection("users")
@@ -106,7 +106,7 @@ class _SettingsState extends State<Settings> {
         await db.collection("users").document(_idUsuarioLogado).get();
 
     Map<String, dynamic> dados = snapshot.data;
-    _controllerNome.text = dados["nome"];
+    _controllerNome.text = dados["name"];
 
     if (dados["urlImagem"] != null) {
       _urlImagemRecuperada = dados["urlImagem"];
