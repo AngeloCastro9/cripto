@@ -11,98 +11,106 @@ class Settings extends StatefulWidget {
 }
 
 class _SettingsState extends State<Settings> {
-  TextEditingController _controllerName = TextEditingController();
-  File _image;
-  String _idLoggedUser;
-  bool _uploadImage = false;
-  String _recoveryImageUrl;
+  TextEditingController _controllerNome = TextEditingController();
+  File _imagem;
+  String _idUsuarioLogado;
+  bool _subindoImagem = false;
+  String _urlImagemRecuperada;
 
-  Future _recuperarimage(String originImage) async {
-    File selectedImage;
-    switch (originImage) {
+  Future _recuperarImagem(String origemImagem) async {
+    File imagemSelecionada;
+    switch (origemImagem) {
       case "camera":
-        selectedImage = await ImagePicker.pickImage(source: ImageSource.camera);
+        imagemSelecionada =
+            await ImagePicker.pickImage(source: ImageSource.camera);
         break;
       case "galeria":
-        selectedImage =
+        imagemSelecionada =
             await ImagePicker.pickImage(source: ImageSource.gallery);
         break;
     }
 
     setState(() {
-      _image = selectedImage;
-      if (_image != null) {
-        _uploadImage = true;
-        _uploadimage();
+      _imagem = imagemSelecionada;
+      if (_imagem != null) {
+        _subindoImagem = true;
+        _uploadImagem();
       }
     });
   }
 
-  Future _uploadimage() async {
+  Future _uploadImagem() async {
     FirebaseStorage storage = FirebaseStorage.instance;
-    StorageReference homePath = storage.ref();
-    StorageReference file =
-        homePath.child("perfil").child(_idLoggedUser + ".jpg");
+    StorageReference pastaRaiz = storage.ref();
+    StorageReference arquivo =
+        pastaRaiz.child("perfil").child(_idUsuarioLogado + ".jpg");
 
-    StorageUploadTask task = file.putFile(_image);
+    StorageUploadTask task = arquivo.putFile(_imagem);
 
     task.events.listen((StorageTaskEvent storageEvent) {
       if (storageEvent.type == StorageTaskEventType.progress) {
         setState(() {
-          _uploadImage = true;
+          _subindoImagem = true;
         });
       } else if (storageEvent.type == StorageTaskEventType.success) {
         setState(() {
-          _uploadImage = false;
+          _subindoImagem = false;
         });
       }
     });
 
+    //Recuperar url da imagem
     task.onComplete.then((StorageTaskSnapshot snapshot) {
-      _recuperarUrlimage(snapshot);
+      _recuperarUrlImagem(snapshot);
     });
   }
 
-  Future _recuperarUrlimage(StorageTaskSnapshot snapshot) async {
+  Future _recuperarUrlImagem(StorageTaskSnapshot snapshot) async {
     String url = await snapshot.ref.getDownloadURL();
-    _updateUrlImageOnFirestore(url);
+    _atualizarUrlImagemFirestore(url);
 
     setState(() {
-      _recoveryImageUrl = url;
+      _urlImagemRecuperada = url;
     });
   }
 
   _atualizarNomeFirestore() {
-    String nome = _controllerName.text;
+    String nome = _controllerNome.text;
     Firestore db = Firestore.instance;
 
-    Map<String, dynamic> updateData = {"nome": nome};
+    Map<String, dynamic> dadosAtualizar = {"nome": nome};
 
-    db.collection("users").document(_idLoggedUser).updateData(updateData);
+    db
+        .collection("users")
+        .document(_idUsuarioLogado)
+        .updateData(dadosAtualizar);
   }
 
-  _updateUrlImageOnFirestore(String url) {
+  _atualizarUrlImagemFirestore(String url) {
     Firestore db = Firestore.instance;
 
-    Map<String, dynamic> updateData = {"urlimage": url};
+    Map<String, dynamic> dadosAtualizar = {"urlImagem": url};
 
-    db.collection("users").document(_idLoggedUser).updateData(updateData);
+    db
+        .collection("users")
+        .document(_idUsuarioLogado)
+        .updateData(dadosAtualizar);
   }
 
   _recuperarDadosUsuario() async {
     FirebaseAuth auth = FirebaseAuth.instance;
-    FirebaseUser loggedUser = await auth.currentUser();
-    _idLoggedUser = loggedUser.uid;
+    FirebaseUser usuarioLogado = await auth.currentUser();
+    _idUsuarioLogado = usuarioLogado.uid;
 
     Firestore db = Firestore.instance;
     DocumentSnapshot snapshot =
-        await db.collection("users").document(_idLoggedUser).get();
+        await db.collection("users").document(_idUsuarioLogado).get();
 
     Map<String, dynamic> dados = snapshot.data;
-    _controllerName.text = dados["nome"];
+    _controllerNome.text = dados["nome"];
 
-    if (dados["urlimage"] != null) {
-      _recoveryImageUrl = dados["urlimage"];
+    if (dados["urlImagem"] != null) {
+      _urlImagemRecuperada = dados["urlImagem"];
     }
   }
 
@@ -126,14 +134,15 @@ class _SettingsState extends State<Settings> {
               children: <Widget>[
                 Container(
                   padding: EdgeInsets.all(16),
-                  child:
-                      _uploadImage ? CircularProgressIndicator() : Container(),
+                  child: _subindoImagem
+                      ? CircularProgressIndicator()
+                      : Container(),
                 ),
                 CircleAvatar(
                     radius: 100,
                     backgroundColor: Colors.grey,
-                    backgroundImage: _recoveryImageUrl != null
-                        ? NetworkImage(_recoveryImageUrl)
+                    backgroundImage: _urlImagemRecuperada != null
+                        ? NetworkImage(_urlImagemRecuperada)
                         : null),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -141,13 +150,13 @@ class _SettingsState extends State<Settings> {
                     FlatButton(
                       child: Text("Câmera"),
                       onPressed: () {
-                        _recuperarimage("camera");
+                        _recuperarImagem("camera");
                       },
                     ),
                     FlatButton(
                       child: Text("Galeria"),
                       onPressed: () {
-                        _recuperarimage("galeria");
+                        _recuperarImagem("galeria");
                       },
                     )
                   ],
@@ -155,7 +164,7 @@ class _SettingsState extends State<Settings> {
                 Padding(
                   padding: EdgeInsets.only(bottom: 8),
                   child: TextField(
-                    controller: _controllerName,
+                    controller: _controllerNome,
                     autofocus: true,
                     keyboardType: TextInputType.text,
                     style: TextStyle(fontSize: 20),
@@ -178,7 +187,7 @@ class _SettingsState extends State<Settings> {
                         "Salvar",
                         style: TextStyle(color: Colors.white, fontSize: 20),
                       ),
-                      color: Colors.green,
+                      color: Colors.blue,
                       padding: EdgeInsets.fromLTRB(32, 16, 32, 16),
                       shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(32)),
