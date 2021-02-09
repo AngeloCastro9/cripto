@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'dart:io';
 
 class Settings extends StatefulWidget {
@@ -10,29 +11,28 @@ class Settings extends StatefulWidget {
 }
 
 class _SettingsState extends State<Settings> {
-  TextEditingController _nameController = TextEditingController();
+  TextEditingController _controllerName = TextEditingController();
   File _image;
-  String _idloggedUser;
-  bool _imageUpload = false;
-  String _urlRecoverImage;
+  String _idLoggedUser;
+  bool _uploadImage = false;
+  String _recoveryImageUrl;
 
-  Future _imageRecover(String origemimage) async {
-    File imageSelecionada;
-    switch (origemimage) {
+  Future _recuperarimage(String originImage) async {
+    File selectedImage;
+    switch (originImage) {
       case "camera":
-        imageSelecionada =
-            await ImagePicker.pickImage(source: ImageSource.camera);
+        selectedImage = await ImagePicker.pickImage(source: ImageSource.camera);
         break;
       case "galeria":
-        imageSelecionada =
+        selectedImage =
             await ImagePicker.pickImage(source: ImageSource.gallery);
         break;
     }
 
     setState(() {
-      _image = imageSelecionada;
+      _image = selectedImage;
       if (_image != null) {
-        _imageUpload = true;
+        _uploadImage = true;
         _uploadimage();
       }
     });
@@ -40,27 +40,24 @@ class _SettingsState extends State<Settings> {
 
   Future _uploadimage() async {
     FirebaseStorage storage = FirebaseStorage.instance;
-    StorageReference folderPath = storage.ref();
+    StorageReference homePath = storage.ref();
     StorageReference file =
-        folderPath.child("perfil").child(_idloggedUser + ".jpg");
+        homePath.child("perfil").child(_idLoggedUser + ".jpg");
 
-    //Upload da image
     StorageUploadTask task = file.putFile(_image);
 
-    //Controlar progresso do upload
     task.events.listen((StorageTaskEvent storageEvent) {
       if (storageEvent.type == StorageTaskEventType.progress) {
         setState(() {
-          _imageUpload = true;
+          _uploadImage = true;
         });
       } else if (storageEvent.type == StorageTaskEventType.success) {
         setState(() {
-          _imageUpload = false;
+          _uploadImage = false;
         });
       }
     });
 
-    //Recuperar url da image
     task.onComplete.then((StorageTaskSnapshot snapshot) {
       _recuperarUrlimage(snapshot);
     });
@@ -68,16 +65,45 @@ class _SettingsState extends State<Settings> {
 
   Future _recuperarUrlimage(StorageTaskSnapshot snapshot) async {
     String url = await snapshot.ref.getDownloadURL();
+    _updateUrlImageOnFirestore(url);
 
     setState(() {
-      _urlRecoverImage = url;
+      _recoveryImageUrl = url;
     });
+  }
+
+  _atualizarNomeFirestore() {
+    String nome = _controllerName.text;
+    Firestore db = Firestore.instance;
+
+    Map<String, dynamic> updateData = {"nome": nome};
+
+    db.collection("users").document(_idLoggedUser).updateData(updateData);
+  }
+
+  _updateUrlImageOnFirestore(String url) {
+    Firestore db = Firestore.instance;
+
+    Map<String, dynamic> updateData = {"urlimage": url};
+
+    db.collection("users").document(_idLoggedUser).updateData(updateData);
   }
 
   _recuperarDadosUsuario() async {
     FirebaseAuth auth = FirebaseAuth.instance;
     FirebaseUser loggedUser = await auth.currentUser();
-    _idloggedUser = loggedUser.uid;
+    _idLoggedUser = loggedUser.uid;
+
+    Firestore db = Firestore.instance;
+    DocumentSnapshot snapshot =
+        await db.collection("users").document(_idLoggedUser).get();
+
+    Map<String, dynamic> dados = snapshot.data;
+    _controllerName.text = dados["nome"];
+
+    if (dados["urlimage"] != null) {
+      _recoveryImageUrl = dados["urlimage"];
+    }
   }
 
   @override
@@ -98,12 +124,16 @@ class _SettingsState extends State<Settings> {
           child: SingleChildScrollView(
             child: Column(
               children: <Widget>[
-                _imageUpload ? CircularProgressIndicator() : Container(),
+                Container(
+                  padding: EdgeInsets.all(16),
+                  child:
+                      _uploadImage ? CircularProgressIndicator() : Container(),
+                ),
                 CircleAvatar(
                     radius: 100,
                     backgroundColor: Colors.grey,
-                    backgroundImage: _urlRecoverImage != null
-                        ? NetworkImage(_urlRecoverImage)
+                    backgroundImage: _recoveryImageUrl != null
+                        ? NetworkImage(_recoveryImageUrl)
                         : null),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -111,13 +141,13 @@ class _SettingsState extends State<Settings> {
                     FlatButton(
                       child: Text("Câmera"),
                       onPressed: () {
-                        _imageRecover("camera");
+                        _recuperarimage("camera");
                       },
                     ),
                     FlatButton(
                       child: Text("Galeria"),
                       onPressed: () {
-                        _imageRecover("galeria");
+                        _recuperarimage("galeria");
                       },
                     )
                   ],
@@ -125,10 +155,13 @@ class _SettingsState extends State<Settings> {
                 Padding(
                   padding: EdgeInsets.only(bottom: 8),
                   child: TextField(
-                    controller: _nameController,
+                    controller: _controllerName,
                     autofocus: true,
                     keyboardType: TextInputType.text,
                     style: TextStyle(fontSize: 20),
+                    /*onChanged: (texto){
+                      _atualizarNomeFirestore(texto);
+                    },*/
                     decoration: InputDecoration(
                         contentPadding: EdgeInsets.fromLTRB(32, 16, 32, 16),
                         hintText: "Nome",
@@ -145,11 +178,13 @@ class _SettingsState extends State<Settings> {
                         "Salvar",
                         style: TextStyle(color: Colors.white, fontSize: 20),
                       ),
-                      color: Colors.blue,
+                      color: Colors.green,
                       padding: EdgeInsets.fromLTRB(32, 16, 32, 16),
                       shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(32)),
-                      onPressed: () {}),
+                      onPressed: () {
+                        _atualizarNomeFirestore();
+                      }),
                 )
               ],
             ),

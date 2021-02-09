@@ -8,8 +8,8 @@ void main() {
   runApp(MaterialApp(
     home: Login(),
     theme: ThemeData(primaryColor: Color(0xff1612da), accentColor: Colors.blue),
-    initialRoute: "/",
     onGenerateRoute: RouteGenerator.generateRoute,
+    initialRoute: "/login",
     debugShowCheckedModeBanner: false,
   ));
 }

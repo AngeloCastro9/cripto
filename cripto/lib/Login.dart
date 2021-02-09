@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'Register.dart';
-import 'Home.dart';
 import 'model/User.dart';
 
 class Login extends StatefulWidget {
@@ -15,7 +14,6 @@ class _LoginState extends State<Login> {
   String _errorMessage = "";
 
   _validarCampos() {
-    //Recupera dados dos campos
     String email = _controllerEmail.text;
     String password = _controllerpassword.text;
 
