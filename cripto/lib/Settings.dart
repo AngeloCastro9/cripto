@@ -59,7 +59,6 @@ class _SettingsState extends State<Settings> {
       }
     });
 
-    //Recuperar url da imagem
     task.onComplete.then((StorageTaskSnapshot snapshot) {
       _recuperarUrlImagem(snapshot);
     });

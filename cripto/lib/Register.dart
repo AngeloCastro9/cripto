@@ -106,7 +106,7 @@ class _RegisterState extends State<Register> {
                     style: TextStyle(fontSize: 20),
                     decoration: InputDecoration(
                         contentPadding: EdgeInsets.fromLTRB(32, 16, 32, 16),
-                        hintText: "name",
+                        hintText: "nome",
                         filled: true,
                         fillColor: Colors.white,
                         border: OutlineInputBorder(
@@ -135,7 +135,7 @@ class _RegisterState extends State<Register> {
                   style: TextStyle(fontSize: 20),
                   decoration: InputDecoration(
                       contentPadding: EdgeInsets.fromLTRB(32, 16, 32, 16),
-                      hintText: "password",
+                      hintText: "senha",
                       filled: true,
                       fillColor: Colors.white,
                       border: OutlineInputBorder(
