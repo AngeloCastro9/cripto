@@ -11,14 +11,12 @@ class Register extends StatefulWidget {
 }
 
 class _RegisterState extends State<Register> {
-  //Controladores
   TextEditingController _controllername = TextEditingController();
   TextEditingController _controllerEmail = TextEditingController();
   TextEditingController _controllerpassword = TextEditingController();
   String _errorMessage = "";
 
   _validarCampos() {
-    //Recupera dados dos campos
     String name = _controllername.text;
     String email = _controllerEmail.text;
     String password = _controllerpassword.text;
@@ -60,7 +58,6 @@ class _RegisterState extends State<Register> {
         .createUserWithEmailAndPassword(
             email: user.email, password: user.password)
         .then((firebaseUser) {
-      //Salvar dados do usuário
       Firestore db = Firestore.instance;
 
       db
