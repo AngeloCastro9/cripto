@@ -1,3 +1,4 @@
+import 'package:cripto/Settings.dart';
 import 'package:flutter/material.dart';
 
 import 'Register.dart';
@@ -15,6 +16,8 @@ class RouteGenerator {
         return MaterialPageRoute(builder: (_) => Register());
       case "/home":
         return MaterialPageRoute(builder: (_) => Home());
+      case "/settings":
+        return MaterialPageRoute(builder: (_) => Settings());
       default:
         _routeError();
     }
