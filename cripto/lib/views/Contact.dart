@@ -10,35 +10,35 @@ class Contact extends StatefulWidget {
 }
 
 class _ContactState extends State<Contact> {
-  String _idUsuarioLogado;
-  String _emailUsuarioLogado;
+  String _idUserLogged;
+  String _emailUserLogged;
 
   Future<List<User>> _recuperarContatos() async {
     Firestore db = Firestore.instance;
 
     QuerySnapshot querySnapshot = await db.collection("users").getDocuments();
 
-    List<User> listaUsuarios = List();
+    List<User> userList = List();
     for (DocumentSnapshot item in querySnapshot.documents) {
-      var dados = item.data;
-      if (dados["email"] == _emailUsuarioLogado) continue;
+      var data = item.data;
+      if (data["email"] == _emailUserLogged) continue;
 
-      User usuario = User();
-      usuario.email = dados["email"];
-      usuario.name = dados["name"];
-      usuario.urlImagem = dados["urlImagem"];
+      User user = User();
+      user.email = data["email"];
+      user.name = data["name"];
+      user.urlImagem = data["urlImagem"];
 
-      listaUsuarios.add(usuario);
+      userList.add(user);
     }
 
-    return listaUsuarios;
+    return userList;
   }
 
   _recuperarDadosUsuario() async {
     FirebaseAuth auth = FirebaseAuth.instance;
-    FirebaseUser usuarioLogado = await auth.currentUser();
-    _idUsuarioLogado = usuarioLogado.uid;
-    _emailUsuarioLogado = usuarioLogado.email;
+    FirebaseUser userLogged = await auth.currentUser();
+    _idUserLogged = userLogged.uid;
+    _emailUserLogged = userLogged.email;
   }
 
   @override
@@ -70,18 +70,18 @@ class _ContactState extends State<Contact> {
                 itemCount: snapshot.data.length,
                 itemBuilder: (_, indice) {
                   List<User> listaItens = snapshot.data;
-                  User usuario = listaItens[indice];
+                  User user = listaItens[indice];
 
                   return ListTile(
                     contentPadding: EdgeInsets.fromLTRB(16, 8, 16, 8),
                     leading: CircleAvatar(
                         maxRadius: 30,
                         backgroundColor: Colors.grey,
-                        backgroundImage: usuario.urlImagem != null
-                            ? NetworkImage(usuario.urlImagem)
+                        backgroundImage: user.urlImagem != null
+                            ? NetworkImage(user.urlImagem)
                             : null),
                     title: Text(
-                      usuario.name,
+                      user.name,
                       style:
                           TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
                     ),
