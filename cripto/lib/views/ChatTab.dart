@@ -20,12 +20,6 @@ class _ChatTabState extends State<ChatTab> {
   void initState() {
     super.initState();
     _recoverUserData();
-
-    Chat chat = Chat();
-    chat.name = "only test";
-    chat.message = "test";
-
-    _listChat.add(chat);
   }
 
   Stream<QuerySnapshot> _addListenerChats() {
@@ -75,14 +69,14 @@ class _ChatTabState extends State<ChatTab> {
           case ConnectionState.active:
           case ConnectionState.done:
             if (snapshot.hasError) {
-              return Text("Erro ao carregar os data!");
+              return Text("Erro ao carregar os dados!");
             } else {
               QuerySnapshot querySnapshot = snapshot.data;
 
               if (querySnapshot.documents.length == 0) {
                 return Center(
                   child: Text(
-                    "Você ainda não tem nenhuma message :( ",
+                    "Você ainda não tem nenhuma mensagem :( ",
                     style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                   ),
                 );

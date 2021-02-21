@@ -185,7 +185,7 @@ class _MessagesState extends State<Messages> {
                 style: TextStyle(fontSize: 15),
                 decoration: InputDecoration(
                     contentPadding: EdgeInsets.fromLTRB(32, 8, 32, 8),
-                    hintText: "Digite uma menssagem",
+                    hintText: "Digite uma mensagem",
                     filled: true,
                     fillColor: Colors.white,
                     border: OutlineInputBorder(
