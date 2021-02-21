@@ -1,6 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-class Chats {
+class Chat {
   String _senderId;
   String _recipientId;
   String _name;
@@ -8,7 +8,7 @@ class Chats {
   String _photoPath;
   String _typeMessage; //texto ou imagem
 
-  Chats();
+  Chat();
 
   save() async {
     Firestore db = Firestore.instance;
