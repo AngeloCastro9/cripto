@@ -11,21 +11,23 @@ class Register extends StatefulWidget {
 }
 
 class _RegisterState extends State<Register> {
-  TextEditingController _controllername = TextEditingController();
-  TextEditingController _controllerEmail = TextEditingController();
-  TextEditingController _controllerpassword = TextEditingController();
-  String _errorMessage = "";
+  //Controladores
+  TextEditingController _controllerNome = TextEditingController(text: "");
+  TextEditingController _controllerEmail = TextEditingController(text: "");
+  TextEditingController _controllerSenha = TextEditingController(text: "");
+  String _mensagemErro = "";
 
   _validarCampos() {
-    String name = _controllername.text;
+    //Recupera dados dos campos
+    String name = _controllerNome.text;
     String email = _controllerEmail.text;
-    String password = _controllerpassword.text;
+    String password = _controllerSenha.text;
 
     if (name.isNotEmpty) {
       if (email.isNotEmpty && email.contains("@")) {
         if (password.isNotEmpty && password.length > 6) {
           setState(() {
-            _errorMessage = "";
+            _mensagemErro = "";
           });
 
           User user = User();
@@ -33,31 +35,32 @@ class _RegisterState extends State<Register> {
           user.email = email;
           user.password = password;
 
-          _cadastrarUsuario(user);
+          _registerUser(user);
         } else {
           setState(() {
-            _errorMessage = "Preencha a senha! digite mais de 6 caracteres";
+            _mensagemErro = "Preencha a password! digite mais de 6 caracteres";
           });
         }
       } else {
         setState(() {
-          _errorMessage = "Preencha o E-mail utilizando @";
+          _mensagemErro = "Preencha o E-mail utilizando @";
         });
       }
     } else {
       setState(() {
-        _errorMessage = "Preencha o nome";
+        _mensagemErro = "Preencha o Nome";
       });
     }
   }
 
-  _cadastrarUsuario(User user) {
+  _registerUser(User user) {
     FirebaseAuth auth = FirebaseAuth.instance;
 
     auth
         .createUserWithEmailAndPassword(
             email: user.email, password: user.password)
         .then((firebaseUser) {
+      //Salvar dados do usuário
       Firestore db = Firestore.instance;
 
       db
@@ -69,7 +72,8 @@ class _RegisterState extends State<Register> {
     }).catchError((error) {
       print("erro app: " + error.toString());
       setState(() {
-        _errorMessage = error.toString();
+        _mensagemErro =
+            "Erro ao cadastrar usuário, verifique os campos e tente novamente!";
       });
     });
   }
@@ -79,7 +83,6 @@ class _RegisterState extends State<Register> {
     return Scaffold(
       appBar: AppBar(
         title: Text("Cadastro"),
-        backgroundColor: Colors.blue,
       ),
       body: Container(
         decoration: BoxDecoration(color: Color(0xff1612da)),
@@ -100,13 +103,13 @@ class _RegisterState extends State<Register> {
                 Padding(
                   padding: EdgeInsets.only(bottom: 8),
                   child: TextField(
-                    controller: _controllername,
+                    controller: _controllerNome,
                     autofocus: true,
                     keyboardType: TextInputType.text,
                     style: TextStyle(fontSize: 20),
                     decoration: InputDecoration(
                         contentPadding: EdgeInsets.fromLTRB(32, 16, 32, 16),
-                        hintText: "nome",
+                        hintText: "Nome",
                         filled: true,
                         fillColor: Colors.white,
                         border: OutlineInputBorder(
@@ -129,13 +132,13 @@ class _RegisterState extends State<Register> {
                   ),
                 ),
                 TextField(
-                  controller: _controllerpassword,
+                  controller: _controllerSenha,
                   obscureText: true,
                   keyboardType: TextInputType.text,
                   style: TextStyle(fontSize: 20),
                   decoration: InputDecoration(
                       contentPadding: EdgeInsets.fromLTRB(32, 16, 32, 16),
-                      hintText: "senha",
+                      hintText: "Senha",
                       filled: true,
                       fillColor: Colors.white,
                       border: OutlineInputBorder(
@@ -158,7 +161,7 @@ class _RegisterState extends State<Register> {
                 ),
                 Center(
                   child: Text(
-                    _errorMessage,
+                    _mensagemErro,
                     style: TextStyle(color: Colors.red, fontSize: 20),
                   ),
                 )

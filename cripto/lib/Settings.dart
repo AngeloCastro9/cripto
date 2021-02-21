@@ -11,41 +11,44 @@ class Settings extends StatefulWidget {
 }
 
 class _SettingsState extends State<Settings> {
-  TextEditingController _controllerNome = TextEditingController();
+  TextEditingController _nameController = TextEditingController();
   File _image;
-  String _userIdLogged;
+  String _idUserLogged;
   bool _uploadImage = false;
   String _recoverUrlImage;
 
-  Future _imageRecover(String imageSource) async {
-    File imageSelected;
-    switch (imageSource) {
+  Future _recoverImage(String sourceImage) async {
+    File imageSelecionada;
+    switch (sourceImage) {
       case "camera":
-        imageSelected = await ImagePicker.pickImage(source: ImageSource.camera);
+        imageSelecionada =
+            await ImagePicker.pickImage(source: ImageSource.camera);
         break;
       case "galeria":
-        imageSelected =
+        imageSelecionada =
             await ImagePicker.pickImage(source: ImageSource.gallery);
         break;
     }
 
     setState(() {
-      _image = imageSelected;
+      _image = imageSelecionada;
       if (_image != null) {
         _uploadImage = true;
-        _uploadimage();
+        _uploadImagem();
       }
     });
   }
 
-  Future _uploadimage() async {
+  Future _uploadImagem() async {
     FirebaseStorage storage = FirebaseStorage.instance;
-    StorageReference rootPath = storage.ref();
+    StorageReference rootFolder = storage.ref();
     StorageReference file =
-        rootPath.child("profile").child(_userIdLogged + ".jpg");
+        rootFolder.child("profile").child(_idUserLogged + ".jpg");
 
+    //Upload da image
     StorageUploadTask task = file.putFile(_image);
 
+    //Controlar progresso do upload
     task.events.listen((StorageTaskEvent storageEvent) {
       if (storageEvent.type == StorageTaskEventType.progress) {
         setState(() {
@@ -58,14 +61,15 @@ class _SettingsState extends State<Settings> {
       }
     });
 
+    //Recuperar url da image
     task.onComplete.then((StorageTaskSnapshot snapshot) {
-      _recoverUrlimage(snapshot);
+      _recoveredUrlImage(snapshot);
     });
   }
 
-  Future _recoverUrlimage(StorageTaskSnapshot snapshot) async {
+  Future _recoveredUrlImage(StorageTaskSnapshot snapshot) async {
     String url = await snapshot.ref.getDownloadURL();
-    _updateUrlimageFirestore(url);
+    _updateUrlImageFirestore(url);
 
     setState(() {
       _recoverUrlImage = url;
@@ -73,43 +77,43 @@ class _SettingsState extends State<Settings> {
   }
 
   _updateNameFirestore() {
-    String name = _controllerNome.text;
+    String name = _nameController.text;
     Firestore db = Firestore.instance;
 
     Map<String, dynamic> updateData = {"name": name};
 
-    db.collection("users").document(_userIdLogged).updateData(updateData);
+    db.collection("users").document(_idUserLogged).updateData(updateData);
   }
 
-  _updateUrlimageFirestore(String url) {
+  _updateUrlImageFirestore(String url) {
     Firestore db = Firestore.instance;
 
-    Map<String, dynamic> updateData = {"urlimage": url};
+    Map<String, dynamic> updateData = {"urlImage": url};
 
-    db.collection("users").document(_userIdLogged).updateData(updateData);
+    db.collection("users").document(_idUserLogged).updateData(updateData);
   }
 
-  _recuperarDadosUsuario() async {
+  _recoverUserData() async {
     FirebaseAuth auth = FirebaseAuth.instance;
     FirebaseUser loggedUser = await auth.currentUser();
-    _userIdLogged = loggedUser.uid;
+    _idUserLogged = loggedUser.uid;
 
     Firestore db = Firestore.instance;
     DocumentSnapshot snapshot =
-        await db.collection("users").document(_userIdLogged).get();
+        await db.collection("users").document(_idUserLogged).get();
 
     Map<String, dynamic> dados = snapshot.data;
-    _controllerNome.text = dados["name"];
+    _nameController.text = dados["name"];
 
-    if (dados["urlimage"] != null) {
-      _recoverUrlImage = dados["urlimage"];
+    if (dados["urlImage"] != null) {
+      _recoverUrlImage = dados["urlImage"];
     }
   }
 
   @override
   void initState() {
     super.initState();
-    _recuperarDadosUsuario();
+    _recoverUserData();
   }
 
   @override
@@ -141,13 +145,13 @@ class _SettingsState extends State<Settings> {
                     FlatButton(
                       child: Text("Câmera"),
                       onPressed: () {
-                        _imageRecover("camera");
+                        _recoverImage("camera");
                       },
                     ),
                     FlatButton(
                       child: Text("Galeria"),
                       onPressed: () {
-                        _imageRecover("galeria");
+                        _recoverImage("galeria");
                       },
                     )
                   ],
@@ -155,7 +159,7 @@ class _SettingsState extends State<Settings> {
                 Padding(
                   padding: EdgeInsets.only(bottom: 8),
                   child: TextField(
-                    controller: _controllerNome,
+                    controller: _nameController,
                     autofocus: true,
                     keyboardType: TextInputType.text,
                     style: TextStyle(fontSize: 20),

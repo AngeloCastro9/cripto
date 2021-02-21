@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:cripto/views/Contact.dart';
-import 'package:cripto/views/Chat.dart';
-
+import 'package:cripto/views/ContactsTab.dart';
+import 'package:cripto/views/ChatTab.dart';
+import 'dart:io';
 import 'Login.dart';
 
 class Home extends StatefulWidget {
@@ -24,7 +24,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
     });
   }
 
-  Future _verifyLoggedUser() async {
+  Future _verifyUserLogged() async {
     FirebaseAuth auth = FirebaseAuth.instance;
 
     FirebaseUser loggedUser = await auth.currentUser();
@@ -37,13 +37,13 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
   @override
   void initState() {
     super.initState();
-    _verifyLoggedUser();
+    _verifyUserLogged();
     _recoverUserData();
     _tabController = TabController(length: 2, vsync: this);
   }
 
-  _chooseMenuItem(String choosemItem) {
-    switch (choosemItem) {
+  _chooseMenuItem(String chosemItem) {
+    switch (chosemItem) {
       case "Configurações":
         Navigator.pushNamed(context, "/settings");
         break;
@@ -65,11 +65,12 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
     return Scaffold(
       appBar: AppBar(
         title: Text("Cripto"),
+        elevation: Platform.isIOS ? 0 : 4,
         bottom: TabBar(
           indicatorWeight: 4,
           labelStyle: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
           controller: _tabController,
-          indicatorColor: Colors.white,
+          indicatorColor: Platform.isIOS ? Colors.grey[400] : Colors.white,
           tabs: <Widget>[
             Tab(
               text: "Conversas",
@@ -95,7 +96,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
       ),
       body: TabBarView(
         controller: _tabController,
-        children: <Widget>[Chat(), Contact()],
+        children: <Widget>[ChatTab(), ContactsTab()],
       ),
     );
   }

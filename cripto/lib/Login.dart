@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'Register.dart';
+import 'Home.dart';
+import 'RouteGenerator.dart';
 import 'model/User.dart';
 
 class Login extends StatefulWidget {
@@ -9,38 +11,39 @@ class Login extends StatefulWidget {
 }
 
 class _LoginState extends State<Login> {
-  TextEditingController _controllerEmail = TextEditingController();
-  TextEditingController _controllerpassword = TextEditingController();
-  String _errorMessage = "";
+  TextEditingController _controllerEmail = TextEditingController(text: "");
+  TextEditingController _controllerSenha = TextEditingController(text: "");
+  String _messageError = "";
 
-  _validarCampos() {
+  _validateFields() {
+    //Recupera dados dos campos
     String email = _controllerEmail.text;
-    String password = _controllerpassword.text;
+    String password = _controllerSenha.text;
 
     if (email.isNotEmpty && email.contains("@")) {
       if (password.isNotEmpty) {
         setState(() {
-          _errorMessage = "";
+          _messageError = "";
         });
 
         User user = User();
         user.email = email;
         user.password = password;
 
-        _logarUsuario(user);
+        _logarUser(user);
       } else {
         setState(() {
-          _errorMessage = "Preencha a password!";
+          _messageError = "Preencha a password!";
         });
       }
     } else {
       setState(() {
-        _errorMessage = "Preencha o E-mail utilizando @";
+        _messageError = "Preencha o E-mail utilizando @";
       });
     }
   }
 
-  _logarUsuario(User user) {
+  _logarUser(User user) {
     FirebaseAuth auth = FirebaseAuth.instance;
 
     auth
@@ -49,26 +52,25 @@ class _LoginState extends State<Login> {
       Navigator.pushReplacementNamed(context, "/home");
     }).catchError((error) {
       setState(() {
-        _errorMessage =
+        _messageError =
             "Erro ao autenticar usuário, verifique e-mail e password e tente novamente!";
       });
     });
   }
 
-  Future _verificaruserLogged() async {
+  Future _verificarUserLogado() async {
     FirebaseAuth auth = FirebaseAuth.instance;
-    //auth.signOut();
 
-    FirebaseUser userLogged = await auth.currentUser();
+    FirebaseUser userLogado = await auth.currentUser();
 
-    if (userLogged != null) {
+    if (userLogado != null) {
       Navigator.pushReplacementNamed(context, "/home");
     }
   }
 
   @override
   void initState() {
-    _verificaruserLogged();
+    _verificarUserLogado();
     super.initState();
   }
 
@@ -108,13 +110,13 @@ class _LoginState extends State<Login> {
                   ),
                 ),
                 TextField(
-                  controller: _controllerpassword,
+                  controller: _controllerSenha,
                   obscureText: true,
                   keyboardType: TextInputType.text,
                   style: TextStyle(fontSize: 20),
                   decoration: InputDecoration(
                       contentPadding: EdgeInsets.fromLTRB(32, 16, 32, 16),
-                      hintText: "senha",
+                      hintText: "Senha",
                       filled: true,
                       fillColor: Colors.white,
                       border: OutlineInputBorder(
@@ -132,7 +134,7 @@ class _LoginState extends State<Login> {
                       shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(32)),
                       onPressed: () {
-                        _validarCampos();
+                        _validateFields();
                       }),
                 ),
                 Center(
@@ -149,7 +151,7 @@ class _LoginState extends State<Login> {
                   padding: EdgeInsets.only(top: 16),
                   child: Center(
                     child: Text(
-                      _errorMessage,
+                      _messageError,
                       style: TextStyle(color: Colors.red, fontSize: 20),
                     ),
                   ),
