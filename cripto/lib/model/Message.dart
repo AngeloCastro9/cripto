@@ -1,9 +1,12 @@
 class Message {
   String _userId;
   String _message;
-  String _urlImagem;
+  String _urlImage;
 
+  //Define o type da message, que pode ser "texto" ou "imagem"
   String _type;
+  String _tipo;
+  String _data;
 
   Message();
 
@@ -11,11 +14,18 @@ class Message {
     Map<String, dynamic> map = {
       "userId": this.userId,
       "message": this.message,
-      "urlImagem": this.urlImagem,
+      "urlImage": this.urlImage,
       "type": this.type,
+      "data": this.data,
     };
 
     return map;
+  }
+
+  String get data => _data;
+
+  set data(String value) {
+    _data = value;
   }
 
   String get type => _type;
@@ -24,10 +34,10 @@ class Message {
     _type = value;
   }
 
-  String get urlImagem => _urlImagem;
+  String get urlImage => _urlImage;
 
-  set urlImagem(String value) {
-    _urlImagem = value;
+  set urlImage(String value) {
+    _urlImage = value;
   }
 
   String get message => _message;

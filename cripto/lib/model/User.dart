@@ -2,8 +2,8 @@ class User {
   String _userId;
   String _name;
   String _email;
+  String _urlImage;
   String _password;
-  String _urlImagem;
 
   User();
 
@@ -19,16 +19,16 @@ class User {
     _userId = value;
   }
 
-  String get urlImagem => _urlImagem;
-
-  set urlImagem(String value) {
-    _urlImagem = value;
-  }
-
   String get password => _password;
 
   set password(String value) {
     _password = value;
+  }
+
+  String get urlImage => _urlImage;
+
+  set urlImage(String value) {
+    _urlImage = value;
   }
 
   String get email => _email;
