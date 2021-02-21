@@ -10,35 +10,35 @@ class Contact extends StatefulWidget {
 }
 
 class _ContactState extends State<Contact> {
-  String _idUserLogged;
-  String _emailUserLogged;
+  String _userLoggedId;
+  String _userEmailLogged;
 
   Future<List<User>> _recuperarContatos() async {
     Firestore db = Firestore.instance;
 
     QuerySnapshot querySnapshot = await db.collection("users").getDocuments();
 
-    List<User> userList = List();
+    List<User> listaUsuarios = List();
     for (DocumentSnapshot item in querySnapshot.documents) {
-      var data = item.data;
-      if (data["email"] == _emailUserLogged) continue;
+      var dados = item.data;
+      if (dados["email"] == _userEmailLogged) continue;
 
       User user = User();
-      user.email = data["email"];
-      user.name = data["name"];
-      user.urlImagem = data["urlImagem"];
+      user.email = dados["email"];
+      user.name = dados["name"];
+      user.urlImagem = dados["urlImagem"];
 
-      userList.add(user);
+      listaUsuarios.add(user);
     }
 
-    return userList;
+    return listaUsuarios;
   }
 
   _recuperarDadosUsuario() async {
     FirebaseAuth auth = FirebaseAuth.instance;
-    FirebaseUser userLogged = await auth.currentUser();
-    _idUserLogged = userLogged.uid;
-    _emailUserLogged = userLogged.email;
+    FirebaseUser loggedUser = await auth.currentUser();
+    _userLoggedId = loggedUser.uid;
+    _userEmailLogged = loggedUser.email;
   }
 
   @override
@@ -51,6 +51,7 @@ class _ContactState extends State<Contact> {
   Widget build(BuildContext context) {
     return FutureBuilder<List<User>>(
       future: _recuperarContatos(),
+      // ignore: missing_return
       builder: (context, snapshot) {
         switch (snapshot.connectionState) {
           case ConnectionState.none:
@@ -73,6 +74,10 @@ class _ContactState extends State<Contact> {
                   User user = listaItens[indice];
 
                   return ListTile(
+                    onTap: () {
+                      Navigator.pushNamed(context, "/messages",
+                          arguments: user);
+                    },
                     contentPadding: EdgeInsets.fromLTRB(16, 8, 16, 8),
                     leading: CircleAvatar(
                         maxRadius: 30,

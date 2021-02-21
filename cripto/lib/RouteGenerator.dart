@@ -1,12 +1,16 @@
+import 'package:cripto/Messages.dart';
 import 'package:cripto/Settings.dart';
 import 'package:flutter/material.dart';
 
 import 'Register.dart';
 import 'Home.dart';
 import 'Login.dart';
+import 'Messages.dart';
 
 class RouteGenerator {
   static Route<dynamic> generateRoute(RouteSettings settings) {
+    final args = settings.arguments;
+
     switch (settings.name) {
       case "/":
         return MaterialPageRoute(builder: (_) => Login());
@@ -18,6 +22,8 @@ class RouteGenerator {
         return MaterialPageRoute(builder: (_) => Home());
       case "/settings":
         return MaterialPageRoute(builder: (_) => Settings());
+      case "/messages":
+        return MaterialPageRoute(builder: (_) => Messages(args));
       default:
         _routeError();
     }
