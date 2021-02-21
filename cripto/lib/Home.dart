@@ -15,40 +15,49 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
   List<String> itensMenu = ["Configurações", "Deslogar"];
   String _userEmail = "";
 
-  Future _recuperarDadosUsuario() async {
+  Future _recoverUserData() async {
     FirebaseAuth auth = FirebaseAuth.instance;
-    FirebaseUser userLogged = await auth.currentUser();
+    FirebaseUser loggedUser = await auth.currentUser();
 
     setState(() {
-      _userEmail = userLogged.email;
+      _userEmail = loggedUser.email;
     });
+  }
+
+  Future _verifyLoggedUser() async {
+    FirebaseAuth auth = FirebaseAuth.instance;
+
+    FirebaseUser loggedUser = await auth.currentUser();
+
+    if (loggedUser == null) {
+      Navigator.pushReplacementNamed(context, "/login");
+    }
   }
 
   @override
   void initState() {
     super.initState();
-
-    _recuperarDadosUsuario();
-
+    _verifyLoggedUser();
+    _recoverUserData();
     _tabController = TabController(length: 2, vsync: this);
   }
 
-  _escolhaMenuItem(String chooseItem) {
-    switch (chooseItem) {
+  _chooseMenuItem(String choosemItem) {
+    switch (choosemItem) {
       case "Configurações":
-        Navigator.pushNamed(context, "/settings");
+        Navigator.pushNamed(context, "/configuracoes");
         break;
       case "Deslogar":
-        _logoffUser();
+        _logoff();
         break;
     }
   }
 
-  _logoffUser() async {
+  _logoff() async {
     FirebaseAuth auth = FirebaseAuth.instance;
     await auth.signOut();
 
-    Navigator.pushReplacementNamed(context, "/");
+    Navigator.pushReplacementNamed(context, "/login");
   }
 
   @override
@@ -72,7 +81,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
         ),
         actions: <Widget>[
           PopupMenuButton<String>(
-            onSelected: _escolhaMenuItem,
+            onSelected: _chooseMenuItem,
             itemBuilder: (context) {
               return itensMenu.map((String item) {
                 return PopupMenuItem<String>(

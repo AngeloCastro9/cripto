@@ -1,4 +1,5 @@
 class User {
+  String _userId;
   String _name;
   String _email;
   String _password;
@@ -10,6 +11,12 @@ class User {
     Map<String, dynamic> map = {"name": this.name, "email": this.email};
 
     return map;
+  }
+
+  String get userId => _userId;
+
+  set userId(String value) {
+    _userId = value;
   }
 
   String get urlImagem => _urlImagem;
