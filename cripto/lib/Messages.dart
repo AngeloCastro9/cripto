@@ -250,7 +250,7 @@ class _MessagesState extends State<Messages> {
                                     item["message"],
                                     style: TextStyle(fontSize: 18),
                                   )
-                                : Image.network(item["urlImage"]),
+                                : Image.network(item["urlImagem"]),
                           ),
                         ),
                       );
