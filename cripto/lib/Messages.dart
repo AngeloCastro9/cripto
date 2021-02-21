@@ -252,26 +252,26 @@ class _MessagesState extends State<Messages> {
                           querySnapshot.documents.toList();
                       DocumentSnapshot item = mensagens[indice];
 
-                      double larguraContainer =
+                      double widthContainer =
                           MediaQuery.of(context).size.width * 0.8;
 
-                      //Define cores e alinhamentos
-                      Alignment alinhamento = Alignment.centerRight;
-                      Color cor = Colors.blue;
+                      //Define cores e aligments
+                      Alignment aligment = Alignment.centerRight;
+                      Color color = Colors.blue;
                       if (_userIdLogged != item["userId"]) {
-                        alinhamento = Alignment.centerLeft;
-                        cor = Colors.white;
+                        aligment = Alignment.centerLeft;
+                        color = Colors.white;
                       }
 
                       return Align(
-                        alignment: alinhamento,
+                        alignment: aligment,
                         child: Padding(
                           padding: EdgeInsets.all(6),
                           child: Container(
-                            width: larguraContainer,
+                            width: widthContainer,
                             padding: EdgeInsets.all(16),
                             decoration: BoxDecoration(
-                                color: cor,
+                                color: color,
                                 borderRadius:
                                     BorderRadius.all(Radius.circular(8))),
                             child: item["type"] == "text"

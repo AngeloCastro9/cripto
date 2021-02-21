@@ -33,7 +33,7 @@ class _LoginState extends State<Login> {
         _logarUser(user);
       } else {
         setState(() {
-          _messageError = "Preencha a password!";
+          _messageError = "Preencha a senha!";
         });
       }
     } else {

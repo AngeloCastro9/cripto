@@ -38,7 +38,7 @@ class _RegisterState extends State<Register> {
           _registerUser(user);
         } else {
           setState(() {
-            _mensagemErro = "Preencha a password! digite mais de 6 caracteres";
+            _mensagemErro = "Preencha a senha! digite mais de 6 caracteres";
           });
         }
       } else {
