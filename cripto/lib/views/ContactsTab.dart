@@ -1,50 +1,51 @@
 import 'package:flutter/material.dart';
-import 'package:cripto/model/Chats.dart';
+import 'package:cripto/model/Chat.dart';
 import 'package:cripto/model/User.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
-class Contact extends StatefulWidget {
+class ContactsTab extends StatefulWidget {
   @override
-  _ContactState createState() => _ContactState();
+  _ContactsTabState createState() => _ContactsTabState();
 }
 
-class _ContactState extends State<Contact> {
-  String _userLoggedId;
-  String _userEmailLogged;
+class _ContactsTabState extends State<ContactsTab> {
+  String _userIdLogged;
+  String _emailUserLogged;
 
   Future<List<User>> _recuperarContatos() async {
     Firestore db = Firestore.instance;
 
     QuerySnapshot querySnapshot = await db.collection("users").getDocuments();
 
-    List<User> listaUsuarios = List();
+    List<User> listaUsers = List();
     for (DocumentSnapshot item in querySnapshot.documents) {
       var dados = item.data;
-      if (dados["email"] == _userEmailLogged) continue;
+      if (dados["email"] == _emailUserLogged) continue;
 
       User user = User();
+      user.userId = item.documentID;
       user.email = dados["email"];
       user.name = dados["name"];
-      user.urlImagem = dados["urlImagem"];
+      user.urlImage = dados["urlImage"];
 
-      listaUsuarios.add(user);
+      listaUsers.add(user);
     }
 
-    return listaUsuarios;
+    return listaUsers;
   }
 
-  _recuperarDadosUsuario() async {
+  _recuperarDadosUser() async {
     FirebaseAuth auth = FirebaseAuth.instance;
-    FirebaseUser loggedUser = await auth.currentUser();
-    _userLoggedId = loggedUser.uid;
-    _userEmailLogged = loggedUser.email;
+    FirebaseUser userLogado = await auth.currentUser();
+    _userIdLogged = userLogado.uid;
+    _emailUserLogged = userLogado.email;
   }
 
   @override
   void initState() {
     super.initState();
-    _recuperarDadosUsuario();
+    _recuperarDadosUser();
   }
 
   @override
@@ -82,8 +83,8 @@ class _ContactState extends State<Contact> {
                     leading: CircleAvatar(
                         maxRadius: 30,
                         backgroundColor: Colors.grey,
-                        backgroundImage: user.urlImagem != null
-                            ? NetworkImage(user.urlImagem)
+                        backgroundImage: user.urlImage != null
+                            ? NetworkImage(user.urlImage)
                             : null),
                     title: Text(
                       user.name,
