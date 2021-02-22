@@ -53,7 +53,7 @@ class _LoginState extends State<Login> {
     }).catchError((error) {
       setState(() {
         _messageError =
-            "Erro ao autenticar usuário, verifique e-mail e password e tente novamente!";
+            "E-mail ou Senha incorretos, verifique e tente novamente!";
       });
     });
   }
