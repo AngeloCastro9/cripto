@@ -26,6 +26,8 @@ class _MessagesState extends State<Messages> {
   bool _uploadImage = false;
   String _userIdLogged;
   String _userIdRecipient;
+  String _loggedUserName;
+  String _loggedUserUrlImage;
   Firestore db = Firestore.instance;
   TextEditingController _messageController = TextEditingController();
 
@@ -69,8 +71,8 @@ class _MessagesState extends State<Messages> {
     cRecipient.senderId = _userIdRecipient;
     cRecipient.recipientId = _userIdLogged;
     cRecipient.message = msg.message;
-    cRecipient.name = widget.contact.name;
-    cRecipient.photoPath = widget.contact.urlImage;
+    cRecipient.name = _loggedUserName;
+    cRecipient.photoPath = _loggedUserUrlImage;
     cRecipient.typeMessage = msg.type;
     cRecipient.save();
   }
@@ -141,8 +143,12 @@ class _MessagesState extends State<Messages> {
   _recoverUserData() async {
     FirebaseAuth auth = FirebaseAuth.instance;
     FirebaseUser loggedUser = await auth.currentUser();
+    DocumentSnapshot snapshot =
+        await db.collection("users").document(loggedUser.uid).get();
     _userIdLogged = loggedUser.uid;
     _userIdRecipient = widget.contact.userId;
+    _loggedUserName = snapshot.data['name'];
+    _loggedUserUrlImage = snapshot.data['urlImage'];
 
     _addListenerMessage();
   }
