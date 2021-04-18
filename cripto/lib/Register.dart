@@ -14,41 +14,46 @@ class _RegisterState extends State<Register> {
   //Controladores
   TextEditingController _controllerNome = TextEditingController(text: "");
   TextEditingController _controllerEmail = TextEditingController(text: "");
-  TextEditingController _controllerSenha = TextEditingController(text: "");
-  String _mensagemErro = "";
+  TextEditingController _controllerPassword = TextEditingController(text: "");
+  TextEditingController _controllerConfirmPassword =
+      TextEditingController(text: "");
+  String _errorMessage = "";
 
-  _validarCampos() {
+  _check() {
     //Recupera dados dos campos
     String name = _controllerNome.text;
     String email = _controllerEmail.text;
-    String password = _controllerSenha.text;
+    String password = _controllerPassword.text;
+    String confirmPassword = _controllerConfirmPassword.text;
 
     if (name.isNotEmpty) {
       if (email.isNotEmpty && email.contains("@")) {
         if (password.isNotEmpty && password.length > 6) {
-          setState(() {
-            _mensagemErro = "";
-          });
+          if (confirmPassword.isNotEmpty && password == confirmPassword) {
+            User user = User();
+            user.name = name;
+            user.email = email;
+            user.password = password;
 
-          User user = User();
-          user.name = name;
-          user.email = email;
-          user.password = password;
-
-          _registerUser(user);
+            _registerUser(user);
+          } else {
+            setState(() {
+              _errorMessage = "As senhas não combinam.";
+            });
+          }
         } else {
           setState(() {
-            _mensagemErro = "Preencha a senha! digite mais de 6 caracteres";
+            _errorMessage = "Preencha a senha! digite mais de 6 caracteres";
           });
         }
       } else {
         setState(() {
-          _mensagemErro = "Preencha o E-mail utilizando @";
+          _errorMessage = "Preencha o E-mail utilizando @";
         });
       }
     } else {
       setState(() {
-        _mensagemErro = "Preencha o Nome";
+        _errorMessage = "Preencha o Nome";
       });
     }
   }
@@ -72,7 +77,7 @@ class _RegisterState extends State<Register> {
     }).catchError((error) {
       print("erro app: " + error.toString());
       setState(() {
-        _mensagemErro =
+        _errorMessage =
             "Erro ao cadastrar usuário, verifique os campos e tente novamente!";
       });
     });
@@ -132,13 +137,13 @@ class _RegisterState extends State<Register> {
                   ),
                 ),
                 TextField(
-                  controller: _controllerSenha,
+                  controller: _controllerPassword,
                   obscureText: true,
                   keyboardType: TextInputType.text,
                   style: TextStyle(fontSize: 20),
                   decoration: InputDecoration(
                       contentPadding: EdgeInsets.fromLTRB(32, 16, 32, 16),
-                      hintText: "Senha",
+                      hintText: "Password",
                       filled: true,
                       fillColor: Colors.white,
                       border: OutlineInputBorder(
@@ -156,12 +161,12 @@ class _RegisterState extends State<Register> {
                       shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(32)),
                       onPressed: () {
-                        _validarCampos();
+                        _check();
                       }),
                 ),
                 Center(
                   child: Text(
-                    _mensagemErro,
+                    _errorMessage,
                     style: TextStyle(color: Colors.red, fontSize: 20),
                   ),
                 )
