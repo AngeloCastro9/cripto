@@ -136,14 +136,29 @@ class _RegisterState extends State<Register> {
                             borderRadius: BorderRadius.circular(32))),
                   ),
                 ),
+                Padding(
+                    padding: EdgeInsets.only(bottom: 8),
+                    child: TextField(
+                      controller: _controllerPassword,
+                      obscureText: true,
+                      keyboardType: TextInputType.text,
+                      style: TextStyle(fontSize: 20),
+                      decoration: InputDecoration(
+                          contentPadding: EdgeInsets.fromLTRB(32, 16, 32, 16),
+                          hintText: "Senha",
+                          filled: true,
+                          fillColor: Colors.white,
+                          border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(32))),
+                    )),
                 TextField(
-                  controller: _controllerPassword,
+                  controller: _controllerConfirmPassword,
                   obscureText: true,
                   keyboardType: TextInputType.text,
                   style: TextStyle(fontSize: 20),
                   decoration: InputDecoration(
                       contentPadding: EdgeInsets.fromLTRB(32, 16, 32, 16),
-                      hintText: "Password",
+                      hintText: "Confirmar senha",
                       filled: true,
                       fillColor: Colors.white,
                       border: OutlineInputBorder(
