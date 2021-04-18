@@ -42,17 +42,42 @@ class _ChatTabState extends State<ChatTab> {
     _addListenerChats();
   }
 
-  _showPopupMenu(Offset offset) async {
+  _deleteChat(String recipientId) async {
+    await db
+        .collection("chats")
+        .document(_idUserLogged)
+        .collection("last_chat")
+        .document(recipientId)
+        .delete();
+
+    await db
+        .collection('messages')
+        .document(_idUserLogged)
+        .collection(recipientId)
+        .getDocuments()
+        .then((messages) {
+      for (DocumentSnapshot message in messages.documents) {
+        message.reference.delete();
+      }
+    });
+  }
+
+  _showPopupMenu(Offset offset, String recipientId) async {
     double left = offset.dx;
     double top = offset.dy;
+
     await showMenu(
       context: context,
       position: RelativeRect.fromLTRB(left, top, 0, 0),
       items: [
         PopupMenuItem(
-          value: 1,
-          child: Text("Delete"),
-        ),
+            value: 1,
+            child: FlatButton(
+              onPressed: () {
+                _deleteChat(recipientId);
+              },
+              child: Text("Apagar conversa"),
+            )),
       ],
       elevation: 8.0,
     );
@@ -119,7 +144,7 @@ class _ChatTabState extends State<ChatTab> {
 
                     return GestureDetector(
                         onTapDown: (TapDownDetails details) {
-                          _showPopupMenu(details.globalPosition);
+                          _showPopupMenu(details.globalPosition, recipientId);
                         },
                         child: ListTile(
                           onTap: () {
