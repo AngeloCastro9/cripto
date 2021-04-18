@@ -42,6 +42,22 @@ class _ChatTabState extends State<ChatTab> {
     _addListenerChats();
   }
 
+  _showPopupMenu(Offset offset) async {
+    double left = offset.dx;
+    double top = offset.dy;
+    await showMenu(
+      context: context,
+      position: RelativeRect.fromLTRB(left, top, 0, 0),
+      items: [
+        PopupMenuItem(
+          value: 1,
+          child: Text("Delete"),
+        ),
+      ],
+      elevation: 8.0,
+    );
+  }
+
   @override
   void dispose() {
     super.dispose();
@@ -101,26 +117,32 @@ class _ChatTabState extends State<ChatTab> {
                     user.urlImage = photoPath;
                     user.userId = recipientId;
 
-                    return ListTile(
-                      onTap: () {
-                        Navigator.pushNamed(context, "/messages",
-                            arguments: user);
-                      },
-                      contentPadding: EdgeInsets.fromLTRB(16, 8, 16, 8),
-                      leading: CircleAvatar(
-                        maxRadius: 30,
-                        backgroundColor: Colors.grey,
-                        backgroundImage:
-                            photoPath != null ? NetworkImage(photoPath) : null,
-                      ),
-                      title: Text(
-                        name,
-                        style: TextStyle(
-                            fontWeight: FontWeight.bold, fontSize: 16),
-                      ),
-                      subtitle: Text(type == "text" ? message : "Imagem...",
-                          style: TextStyle(color: Colors.grey, fontSize: 14)),
-                    );
+                    return GestureDetector(
+                        onTapDown: (TapDownDetails details) {
+                          _showPopupMenu(details.globalPosition);
+                        },
+                        child: ListTile(
+                          onTap: () {
+                            Navigator.pushNamed(context, "/messages",
+                                arguments: user);
+                          },
+                          contentPadding: EdgeInsets.fromLTRB(16, 8, 16, 8),
+                          leading: CircleAvatar(
+                            maxRadius: 30,
+                            backgroundColor: Colors.grey,
+                            backgroundImage: photoPath != null
+                                ? NetworkImage(photoPath)
+                                : null,
+                          ),
+                          title: Text(
+                            name,
+                            style: TextStyle(
+                                fontWeight: FontWeight.bold, fontSize: 16),
+                          ),
+                          subtitle: Text(type == "text" ? message : "Imagem...",
+                              style:
+                                  TextStyle(color: Colors.grey, fontSize: 14)),
+                        ));
                   });
             }
         }
