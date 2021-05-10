@@ -126,10 +126,10 @@ class _ChatTabState extends State<ChatTab> {
               return ListView.builder(
                   // itemCount: _listChat.length,
                   itemCount: querySnapshot.documents.length,
-                  itemBuilder: (context, indice) {
+                  itemBuilder: (context, index) {
                     List<DocumentSnapshot> chats =
                         querySnapshot.documents.toList();
-                    DocumentSnapshot item = chats[indice];
+                    DocumentSnapshot item = chats[index];
 
                     String photoPath = item["photoPath"];
                     String type = item["typeMessage"];
@@ -141,6 +141,8 @@ class _ChatTabState extends State<ChatTab> {
                     user.name = name;
                     user.urlImage = photoPath;
                     user.userId = recipientId;
+
+                    print(name);
 
                     return GestureDetector(
                         onTapDown: (TapDownDetails details) {
