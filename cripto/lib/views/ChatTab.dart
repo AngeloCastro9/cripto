@@ -71,9 +71,11 @@ class _ChatTabState extends State<ChatTab> {
       position: RelativeRect.fromLTRB(left, top, 0, 0),
       items: [
         PopupMenuItem(
-            value: 1,
+            value: 'chat options',
             child: FlatButton(
               onPressed: () {
+                Navigator.pop(context, 'chat options');
+
                 _deleteChat(recipientId);
               },
               child: Text("Apagar conversa"),
@@ -142,10 +144,8 @@ class _ChatTabState extends State<ChatTab> {
                     user.urlImage = photoPath;
                     user.userId = recipientId;
 
-                    print(name);
-
                     return GestureDetector(
-                        onTapDown: (TapDownDetails details) {
+                        onLongPressStart: (LongPressStartDetails details) {
                           _showPopupMenu(details.globalPosition, recipientId);
                         },
                         child: ListTile(
