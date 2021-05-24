@@ -7,6 +7,7 @@ class Chat {
   String _message;
   String _photoPath;
   String _typeMessage; //texto ou imagem
+  bool _wasRead;
 
   Chat();
 
@@ -28,6 +29,7 @@ class Chat {
       "message": this.message,
       "photoPath": this.photoPath,
       "typeMessage": this.typeMessage,
+      "wasRead": this.wasRead,
     };
 
     return map;
@@ -67,5 +69,11 @@ class Chat {
 
   set typeMessage(String value) {
     _typeMessage = value;
+  }
+
+  bool get wasRead => _wasRead;
+
+  set wasRead(bool value) {
+    _wasRead = value;
   }
 }

@@ -64,6 +64,7 @@ class _MessagesState extends State<Messages> {
     cSender.name = widget.contact.name;
     cSender.photoPath = widget.contact.urlImage;
     cSender.typeMessage = msg.type;
+    cSender.wasRead = true;
     cSender.save();
 
     //Salvar conversa destinatario
@@ -74,6 +75,7 @@ class _MessagesState extends State<Messages> {
     cRecipient.name = _loggedUserName;
     cRecipient.photoPath = _loggedUserUrlImage;
     cRecipient.typeMessage = msg.type;
+    cRecipient.wasRead = false;
     cRecipient.save();
   }
 
@@ -140,6 +142,15 @@ class _MessagesState extends State<Messages> {
     _saveMessage(_userIdRecipient, _userIdLogged, message);
   }
 
+  _markLastMessageWasRead() {
+    db
+        .collection("chats")
+        .document(_userIdLogged)
+        .collection('last_chat')
+        .document(_userIdRecipient)
+        .updateData({"wasRead": true});
+  }
+
   _recoverUserData() async {
     FirebaseAuth auth = FirebaseAuth.instance;
     FirebaseUser loggedUser = await auth.currentUser();
@@ -150,6 +161,7 @@ class _MessagesState extends State<Messages> {
     _loggedUserName = snapshot.data['name'];
     _loggedUserUrlImage = snapshot.data['urlImage'];
 
+    _markLastMessageWasRead();
     _addListenerMessage();
   }
 

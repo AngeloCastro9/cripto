@@ -4,6 +4,7 @@ import 'package:cripto/model/Chat.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cripto/model/User.dart';
+import 'package:badges/badges.dart';
 
 class ChatTab extends StatefulWidget {
   @override
@@ -22,7 +23,7 @@ class _ChatTabState extends State<ChatTab> {
     _recoverUserData();
   }
 
-  Stream<QuerySnapshot> _addListenerChats() {
+  _addListenerChats() {
     final stream = db
         .collection("chats")
         .document(_idUserLogged)
@@ -149,27 +150,34 @@ class _ChatTabState extends State<ChatTab> {
                           _showPopupMenu(details.globalPosition, recipientId);
                         },
                         child: ListTile(
-                          onTap: () {
-                            Navigator.pushNamed(context, "/messages",
-                                arguments: user);
-                          },
-                          contentPadding: EdgeInsets.fromLTRB(16, 8, 16, 8),
-                          leading: CircleAvatar(
-                            maxRadius: 30,
-                            backgroundColor: Colors.grey,
-                            backgroundImage: photoPath != null
-                                ? NetworkImage(photoPath)
-                                : null,
-                          ),
-                          title: Text(
-                            name,
-                            style: TextStyle(
-                                fontWeight: FontWeight.bold, fontSize: 16),
-                          ),
-                          subtitle: Text(type == "text" ? message : "Imagem...",
-                              style:
-                                  TextStyle(color: Colors.grey, fontSize: 14)),
-                        ));
+                            onTap: () {
+                              Navigator.pushNamed(context, "/messages",
+                                  arguments: user);
+                            },
+                            contentPadding: EdgeInsets.fromLTRB(16, 8, 16, 8),
+                            leading: CircleAvatar(
+                              maxRadius: 30,
+                              backgroundColor: Colors.grey,
+                              backgroundImage: photoPath != null
+                                  ? NetworkImage(photoPath)
+                                  : null,
+                            ),
+                            title: Text(
+                              name,
+                              style: TextStyle(
+                                  fontWeight: FontWeight.bold, fontSize: 16),
+                            ),
+                            subtitle: Text(
+                                type == "text" ? message : "Imagem...",
+                                style: TextStyle(
+                                    color: Colors.grey, fontSize: 14)),
+                            trailing: Visibility(
+                              child: Badge(
+                                badgeContent: Text('!'),
+                                child: Icon(Icons.message),
+                              ),
+                              visible: !item["wasRead"],
+                            )));
                   });
             }
         }
