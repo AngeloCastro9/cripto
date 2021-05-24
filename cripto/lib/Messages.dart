@@ -143,12 +143,18 @@ class _MessagesState extends State<Messages> {
   }
 
   _markLastMessageWasRead() {
-    db
+    DocumentReference chatRef = db
         .collection("chats")
         .document(_userIdLogged)
-        .collection('last_chat')
-        .document(_userIdRecipient)
-        .updateData({"wasRead": true});
+        .collection("last_chat")
+        .document(_userIdRecipient);
+
+    chatRef.get().then((chat) => {
+          if (chat.exists)
+            {
+              chat.reference.updateData({"wasRead": true})
+            }
+        });
   }
 
   _recoverUserData() async {
