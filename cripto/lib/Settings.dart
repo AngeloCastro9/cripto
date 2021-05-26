@@ -106,7 +106,9 @@ class _SettingsState extends State<Settings> {
     _nameController.text = dados["name"];
 
     if (dados["urlImage"] != null) {
-      _recoverUrlImage = dados["urlImage"];
+      setState(() {
+        _recoverUrlImage = dados["urlImage"];
+      });
     }
   }
 
