@@ -17,27 +17,52 @@ class _SettingsState extends State<Settings> {
   bool _uploadImage = false;
   String _recoverUrlImage;
 
-  Future _recoverImage(String sourceImage) async {
-    File imageSelecionada;
-    switch (sourceImage) {
+  final picker = ImagePicker();
+
+  Future _recoverImage(String origemImagem) async {
+    var pickedFile;
+
+    switch (origemImagem) {
       case "camera":
-        imageSelecionada =
-            await ImagePicker.pickImage(source: ImageSource.camera);
+        pickedFile = await picker.getImage(source: ImageSource.camera);
         break;
       case "galeria":
-        imageSelecionada =
-            await ImagePicker.pickImage(source: ImageSource.gallery);
+        pickedFile = await picker.getImage(source: ImageSource.gallery);
         break;
     }
 
     setState(() {
-      _image = imageSelecionada;
-      if (_image != null) {
+      if (pickedFile != null) {
         _uploadImage = true;
+        _image = File(pickedFile.path);
         _uploadImagem();
+      } else {
+        print('No image selected.');
       }
     });
   }
+
+  // Future _recoverImage(String sourceImage) async {
+  //   File imageSelecionada;
+  //   switch (sourceImage) {
+  //     case "camera":
+  //       imageSelecionada =
+  //           await ImagePicker.pickImage(source: ImageSource.camera);
+  //       break;
+  //     case "galeria":
+  //       imageSelecionada =
+  //           await ImagePicker.pickImage(source: ImageSource.gallery);
+  //       break;
+  //   }
+
+  //   setState(() {
+  //     _image = imageSelecionada;
+  //     if (_image != null) {
+  //       _uploadImage = true;
+  //       _uploadImagem();
+  //     }
+  //   });
+  // }
 
   Future _uploadImagem() async {
     FirebaseStorage storage = FirebaseStorage.instance;
