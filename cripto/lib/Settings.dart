@@ -42,28 +42,6 @@ class _SettingsState extends State<Settings> {
     });
   }
 
-  // Future _recoverImage(String sourceImage) async {
-  //   File imageSelecionada;
-  //   switch (sourceImage) {
-  //     case "camera":
-  //       imageSelecionada =
-  //           await ImagePicker.pickImage(source: ImageSource.camera);
-  //       break;
-  //     case "galeria":
-  //       imageSelecionada =
-  //           await ImagePicker.pickImage(source: ImageSource.gallery);
-  //       break;
-  //   }
-
-  //   setState(() {
-  //     _image = imageSelecionada;
-  //     if (_image != null) {
-  //       _uploadImage = true;
-  //       _uploadImagem();
-  //     }
-  //   });
-  // }
-
   Future _uploadImagem() async {
     FirebaseStorage storage = FirebaseStorage.instance;
     StorageReference rootFolder = storage.ref();
