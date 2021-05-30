@@ -41,5 +41,9 @@
 	</array>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<false/>
+  <key>NSPhotoLibraryUsageDescription</key>
+  <string>Para enviar fotos da galeria, favor liberar o acesso</string>
+  <key>NSCameraUsageDescription</key>
+  <string>Para enviar fotos da camera, favor liberar o acesso</string>
 </dict>
 </plist>
